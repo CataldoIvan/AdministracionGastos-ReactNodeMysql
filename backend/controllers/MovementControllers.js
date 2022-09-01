@@ -27,6 +27,7 @@ const getForId = async (req, res) => {
 };
 
 const createMov = async (req, res) => {
+  console.log(req.body);
   const { concept, amount, date, type } = req.body;
   if (!concept || !amount || !date || !type) {
     return res.status(400).json({
@@ -45,18 +46,41 @@ const createMov = async (req, res) => {
   }
 };
 const deleteMov = async (req, res) => {
-    try {
-        movement.destroy({ where: { id: req.params.id } });
-      res.json({msj:"Movimiento eliminado correctamente"})
-    } catch (error) {
-        res.json({error:`Hubo un error al intentar eliminar el gasto ${error}`})
-
-        
-    }
+  try {
+    movement.destroy({ where: { id: req.params.id } });
+    res.json({ msj: "Movimiento eliminado correctamente" });
+  } catch (error) {
+    res.json({ error: `Hubo un error al intentar eliminar el gasto ${error}` });
+  }
 };
+
+const editMov = async (req, res) => {
+
+  const idToEdith = req.params.id;
+  try {
+    await movement.update(
+      {
+        ...req.body,
+      },
+      {
+        where: {
+          id: idToEdith,
+        },
+      }
+    );
+
+    const result = await movement.findByPk(idToEdith);
+
+    res.json(result);
+  } catch (error) {
+    res.json(error);
+  }
+};
+
 module.exports = {
   getAll,
   getForId,
   createMov,
-  deleteMov
+  deleteMov,
+  editMov,
 };

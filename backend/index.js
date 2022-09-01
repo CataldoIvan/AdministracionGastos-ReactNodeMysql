@@ -23,5 +23,5 @@ const port = process.env.PORT || 3000;
 app.use("/", router);
 
 app.listen(port, () => {
-  console.log("esta funcionando gatooooo");
+  console.log("Puerto 3000 a la escucha");
 });
