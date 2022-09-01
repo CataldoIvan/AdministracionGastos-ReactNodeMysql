@@ -1,0 +1,17 @@
+
+
+POST http://localhost:3000/ HTTP/1.1
+content-type: application/json
+
+{ 
+    "concept": "comida",
+    "amount":340,
+    "date":"12-15-2022",
+    "type":"food"
+    }
+
+###
+GET http://localhost:3000/ HTTP/1.1
+
+###
+DELETE HTTP/1.1 http://localhost:3000/1 HTTP/1.1
