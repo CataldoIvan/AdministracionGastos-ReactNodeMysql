@@ -13,6 +13,20 @@ const getAll = async (req, res) => {
     throw new Error(error);
   }
 };
+const getBalance = async (req, res) => {
+  try {
+    const balance = await movement.sum("amount");
+    console.log(balance);
+    if (balance === null) {
+      return res
+        .status(405)
+        .json({ error: " No se pudieron obtener el listado de movimientos" });
+    }
+    res.json(balance);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
 const getForId = async (req, res) => {
   const id = req.params.id;
@@ -46,6 +60,7 @@ const createMov = async (req, res) => {
   }
 };
 const deleteMov = async (req, res) => {
+  console.log(req);
   try {
     movement.destroy({ where: { id: req.params.id } });
     res.json({ msj: "Movimiento eliminado correctamente" });
@@ -83,4 +98,5 @@ module.exports = {
   createMov,
   deleteMov,
   editMov,
+  getBalance
 };

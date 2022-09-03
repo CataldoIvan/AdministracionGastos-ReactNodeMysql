@@ -4,13 +4,17 @@ const {
   getForId,
   createMov,
   deleteMov,
-  editMov
+  editMov,
+  getBalance
 } = require("../controllers/MovementControllers");
 
 const router = express.Router();
 
 //obtain all datas
 router.get("/", getAll);
+
+//obtain balance
+router.get("/balance", getBalance);
 
 //obtain one
 router.get("/:id", getForId);

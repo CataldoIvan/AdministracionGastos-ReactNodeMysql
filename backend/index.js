@@ -15,13 +15,14 @@ const app = express()
   }
 })();
 
+
 //middleware
 app.use(express.json()); //recibir inf
 app.use(cors()); //hab a otras app a realizar peticiones a nuesta app
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3030;
 app.use("/", router);
 
 app.listen(port, () => {
-  console.log("Puerto 3000 a la escucha");
+  console.log("Puerto 3030 a la escucha");
 });
