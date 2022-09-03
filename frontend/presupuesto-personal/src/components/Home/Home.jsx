@@ -41,12 +41,12 @@ const Home = () => {
       setList(res.data);
     };
     getAllMovement();
-  }, []);
+  }, [balance]);
 
   return (
     <div className="home">
       <h2>Saldo de la cuenta :${balance&&balance}</h2>
-      <Link to="/add" >Agregar</Link>
+      
       {list? <ListMov list={list} />:null}
     </div>
   );
