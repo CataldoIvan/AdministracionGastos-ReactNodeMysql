@@ -1,0 +1,15 @@
+
+
+
+
+
+.listmov{
+    margin: 5px;
+    min-width: 400px;
+}
+
+.filters{
+    display: flex;
+    justify-content: end;
+   
+}

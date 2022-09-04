@@ -1,22 +1,22 @@
 import React, { useState } from "react";
+import dayjs from "dayjs";
+import "./FormEdit.css"
+import { useNavigate } from "react-router-dom";
+
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useLocation } from "react-router-dom";
+import Stack from "@mui/material/Stack";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 const axios = require("axios");
 
-const currencies = [
-  {
-    value: "salidas",
-    label: "Salidas",
-  },
-  {
-    value: "ingreso",
-    label: "Ingreso",
-  },
-];
+
 const Form = () => {
   const data = useLocation();
+  let navigate = useNavigate();
 
   const [movement, setMovement] = useState({
     concept: data.state.concept,
@@ -24,9 +24,15 @@ const Form = () => {
     date: data.state.date,
     type: data.state.type,
   });
-
-  const handleChange = (e) => {
-    setMovement({ ...movement, [e.target.name]: e.target.value });
+ 
+  const handleChange = (e,pickDate=false) => {
+    console.log(e);
+    console.log(pickDate);
+    if(pickDate){
+    setMovement({ ...movement,date: e.toISOString() });
+    }else{
+      setMovement({ ...movement, [e.target.name]: e.target.value });
+    }
   };
 
   const handleClick = async (e) => {
@@ -34,6 +40,9 @@ const Form = () => {
     console.log(movement);
     const res = await axios.put(`http://localhost:3030/edit/${data.state.id}`, movement);
     console.log(res);
+    if(res.status==200){
+      navigate("/ListMovements");
+   }
   };
 
   return (
@@ -56,15 +65,19 @@ const Form = () => {
           name="concept"
           defaultValue={movement.concept}
         />
-        <TextField
-          id="outlined-read-only-input"
-          label="Fecha"
-          type="text"
-         
-          name="date"
-          onChange={handleChange}
-          defaultValue={movement.date}
-        />
+        <LocalizationProvider  dateAdapter={AdapterDayjs}>
+          <Stack id="pickerDate">
+            <DesktopDatePicker
+              label="Date desktop"
+              name="date"
+              inputFormat="DD/MM/YYYY"
+              value={movement.date}
+              onChange={(e)=>{
+                handleChange(e,true)}}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </Stack>
+        </LocalizationProvider>
         <TextField
           id="outlined-number"
           label="amount"

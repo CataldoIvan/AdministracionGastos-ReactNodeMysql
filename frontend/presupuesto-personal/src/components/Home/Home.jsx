@@ -1,31 +1,14 @@
+import "./Home.css"
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import CardBalance from "../CardBalance/CardBalance";
 import ListMov from "../ListMov/ListMov";
+import Navbar from "../NavBar/Navbar";
 const axios = require("axios");
 
-const array = [
-  {
-    concept: "comida",
-    amount: 1235,
-    date: 12 - 20 - 2022,
-    type: "ingreso",
-  },
-  {
-    concept: "amigos",
-    amount: 200,
-    date: 31 - 12 - 2000,
-    type: "salida",
-  },
-  {
-    concept: "juego",
-    amount: 750,
-    date: 31 - 12 - 2100,
-    type: "salida",
-  },
-];
 const Home = () => {
   const [balance, setBalance] = useState();
-  const [list, setList] = useState(array);
+  const [list, setList] = useState([]);
 
   useEffect(() => {
     const getAllMovement = async () => {
@@ -45,8 +28,10 @@ const Home = () => {
 
   return (
     <div className="home">
-      <h2>Saldo de la cuenta :${balance && balance}</h2>
-
+    
+      
+      {balance && <CardBalance text={`Saldo de la cuenta :`} balance={balance}/>}
+      
       {list ? <ListMov onHome={true}/> : null}
     </div>
   );
