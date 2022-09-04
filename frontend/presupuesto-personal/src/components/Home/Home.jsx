@@ -24,7 +24,7 @@ const array = [
   },
 ];
 const Home = () => {
-  const [balance, setBalance] = useState()
+  const [balance, setBalance] = useState();
   const [list, setList] = useState(array);
 
   useEffect(() => {
@@ -33,9 +33,9 @@ const Home = () => {
         console.log(response);
          */
 
-        const resBal = await axios.get("http://localhost:3030/balance");
-        console.log(resBal.data);
-        setBalance(resBal.data);
+      const resBal = await axios.get("http://localhost:3030/balance");
+      console.log(resBal.data);
+      setBalance(resBal.data);
       const res = await axios.get("http://localhost:3030");
       console.log(res.data);
       setList(res.data);
@@ -45,9 +45,9 @@ const Home = () => {
 
   return (
     <div className="home">
-      <h2>Saldo de la cuenta :${balance&&balance}</h2>
-      
-      {list? <ListMov list={list} />:null}
+      <h2>Saldo de la cuenta :${balance && balance}</h2>
+
+      {list ? <ListMov onHome={true}/> : null}
     </div>
   );
 };

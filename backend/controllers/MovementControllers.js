@@ -1,38 +1,43 @@
 const movement = require("../models/Movements");
-
+const { Op } = require("sequelize");
 const getAll = async (req, res) => {
-
-console.log(req.query.listFor);
-if(req.query.listFor!=="todos"){
-  try {
-    const movements = await movement.findAll({where:{type:req.query.listFor}});
-    console.log(movements);
-    res.json(movements)
-    /* if (movements === null) {
+  console.log(req.query.listFor);
+  if (req.query.listFor !== "todos") {
+    try {
+      const movements = await movement.findAll({
+        where: {
+          [Op.or]: [
+            { type: req.query.listFor },
+            { concept: req.query.listFor },
+          ],
+        },
+      });
+      console.log(movements);
+      res.json(movements);
+      /* if (movements === null) {
       return res
         .status(405)
         .json({ error: " No se pudieron obtener el listado de movimientos" });
     }
     res.json(movements); */
-  } catch (error) {
-    throw new Error(error);
-  }
-
-}else{
-  try {
-    const movements = await movement.findAll();
-    console.log(movements);
-    res.json(movements)
-    /* if (movements === null) {
+    } catch (error) {
+      throw new Error(error);
+    }
+  } else {
+    try {
+      const movements = await movement.findAll();
+      console.log(movements);
+      res.json(movements);
+      /* if (movements === null) {
       return res
         .status(405)
         .json({ error: " No se pudieron obtener el listado de movimientos" });
     }
     res.json(movements); */
-  } catch (error) {
-    throw new Error(error);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
-}
 };
 const getBalance = async (req, res) => {
   try {
@@ -91,7 +96,6 @@ const deleteMov = async (req, res) => {
 };
 
 const editMov = async (req, res) => {
-
   const idToEdith = req.params.id;
   try {
     await movement.update(
@@ -119,5 +123,5 @@ module.exports = {
   createMov,
   deleteMov,
   editMov,
-  getBalance
+  getBalance,
 };
