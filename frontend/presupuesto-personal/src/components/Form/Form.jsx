@@ -1,7 +1,14 @@
 import React, { useState } from "react";
+import "./Form.css";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 const axios = require("axios");
 
 const currencies = [
@@ -14,25 +21,35 @@ const currencies = [
     label: "Ingreso",
   },
 ];
+
 const Form = () => {
   const [newMov, setNewMov] = useState({
     concept: null,
     amount: null,
-    date: null,
+    date: dayjs().toISOString(),
     type: "salida",
   });
+  let navigate = useNavigate();
 
-  const handleChange=(e)=>{
-    
-    setNewMov({...newMov,[e.target.name]:e.target.value})
-  }
+
+  const handleChange = (e, pickDate = false) => {
+    if (pickDate) {
+      console.log(e.toISOString());
+      setNewMov({ ...newMov, date: e.toISOString() });
+    } else {
+      setNewMov({ ...newMov, [e.target.name]: e.target.value });
+    }
+    console.log(newMov);
+  };
 
   const handleClick = async (e) => {
     e.preventDefault();
-    console.log(newMov);
-    const res=await axios.post("http://localhost:3030",newMov)
-    console.log(res);
-
+    //console.log(newMov);
+    const res = await axios.post("http://localhost:3030", newMov);
+    console.log(res.status);
+    if (res.status == 200) {
+      navigate("/");
+    }
   };
 
   return (
@@ -49,21 +66,32 @@ const Form = () => {
           id="outlined-password-input"
           label="concept"
           type="text"
+          /* minLength="5" */
           autoComplete=""
           onChange={handleChange}
           name="concept"
+          required
         />
+
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Stack id="pickerDate">
+            <DesktopDatePicker
+            required
+              label="Date desktop"
+              name="date"
+              inputFormat="DD/MM/YYYY"
+              value={newMov.date}
+              onChange={(e) => {
+                handleChange(e, true);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </Stack>
+        </LocalizationProvider>
         <TextField
-          id="outlined-read-only-input"
-          label="Fecha"
-          type="text"
-          /* defaultValue="" */
-          name="date"
-          onChange={handleChange}
-        />
-        <TextField
+        required
           id="outlined-number"
-          label="amount"
+          label="Importe"
           type="number"
           InputLabelProps={{
             shrink: true,
@@ -83,6 +111,7 @@ const Form = () => {
           onChange={handleChange}
           name="type"
           variant="filled"
+          required
           defaultValue={"Salida"}
         >
           {currencies.map((option) => (
@@ -101,7 +130,6 @@ const Form = () => {
       >
         Crear
       </Button>
-      
     </Box>
   );
 };

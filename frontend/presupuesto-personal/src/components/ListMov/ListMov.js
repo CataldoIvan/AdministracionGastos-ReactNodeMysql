@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./ListMov.css"
 import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -92,36 +93,40 @@ const ListMov = ({ onHome }) => {
   };
 
   return (
-    <div>
-      <Box sx={{ minWidth: 120 }}>
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">
-            Filtrar por Concepto:
-          </InputLabel>
-          <Select
-            autoWidth
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={filterType}
-            label="Age"
-            onChange={handleChange}
-          >
-            <MenuItem value={"todos"}>Todos</MenuItem>
-
-            {filterConcept?.map((conceptItem, index) => {
-              return (
-                <MenuItem key={index} value={conceptItem}>
-                  {conceptItem}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-      </Box>
+    <div className="listmov">
+      <div className="filters">
 
       {!listOnHome && (
-        <Box sx={{ minWidth: 120 }}>
-          <FormControl>
+        <Box  sx={{mr:1, minWidth: 160 }}>
+          <FormControl className="select-filter" fullWidth>
+            <InputLabel id="demo-simple-select-label">
+              Filtrar por Concepto:
+            </InputLabel>
+            <Select
+              autoWidth
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={filterType}
+              label="Age"
+              onChange={handleChange}
+            >
+              <MenuItem value={"todos"}>Todos</MenuItem>
+
+              {filterConcept?.map((conceptItem, index) => {
+                return (
+                  <MenuItem key={index} value={conceptItem}>
+                    {conceptItem}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </Box>
+      )}
+
+      {!listOnHome && (
+        <Box sx={{mr:1,mb:1, minWidth: 150 }}>
+          <FormControl className="select-filter" fullWidth>
             <InputLabel id="demo-simple-select-label">Filtrar por:</InputLabel>
             <Select
               autoWidth
@@ -138,9 +143,10 @@ const ListMov = ({ onHome }) => {
           </FormControl>
         </Box>
       )}
+      </div>
       <TableContainer component={Paper}>
         <Table
-          sx={{ minWidth: 650 }}
+          /* sx={{ minWidth: 650 }} */
           size="small"
           padding="small"
           aria-label="simple table"
@@ -161,7 +167,7 @@ const ListMov = ({ onHome }) => {
                 /* sx={{ "&:last-child td, &:last-child th": { border: 1 } }} */
               >
                 <TableCell component="th" scope="row" size="medium">
-                  {row.date}
+                  {new Date(row.date).toLocaleDateString("en-GB").slice(0, 10)}
                 </TableCell>
                 <TableCell component="th" scope="row" size="medium">
                   {row.concept}

@@ -1,0 +1,7 @@
+.home {
+    width: 100%;
+    display: inline-flex;
+   margin-top: 30px;
+    justify-content: space-evenly;
+    min-height: 90vh;
+}
