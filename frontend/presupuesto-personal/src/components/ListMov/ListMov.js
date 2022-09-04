@@ -43,35 +43,32 @@ const ListMov = ({ onHome }) => {
   const [filterType, setFilterType] = useState("todos");
   const [filterConcept, setFilterConcept] = useState([]);
   const listOnHome = onHome || false;
- 
+
   useEffect(() => {
-    getAllMovement()
-    
-    
+    getAllMovement();
   }, [filterType]);
 
   const getAllMovement = async () => {
     /* const response=await fetch("http://localhost:3030")
           console.log(response);
            */
-    
+
     const res = await axios.get("http://localhost:3030", {
       params: { listFor: filterType },
     });
     console.log(res.data);
     setList(res.data);
-    listOfCategory(res.data)
-   
+    listOfCategory(res.data);
   };
 
   const listOfCategory = (list) => {
-    const result = list.reduce((acc,item)=>{
-      if(!acc.includes(item.concept)){
+    const result = list.reduce((acc, item) => {
+      if (!acc.includes(item.concept)) {
         acc.push(item.concept);
       }
       console.log(acc);
       return acc;
-    },[])
+    }, []);
     console.log(result);
     setFilterConcept(result);
     if (list) {
@@ -96,29 +93,32 @@ const ListMov = ({ onHome }) => {
 
   return (
     <div>
-     
-        <Box sx={{ minWidth: 120 }}>
-          <FormControl>
-            <InputLabel id="demo-simple-select-label">Filtrar por Concepto:</InputLabel>
-            <Select
-              autoWidth
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={filterType}
-              label="Age"
-              onChange={handleChange}
-            >
-              <MenuItem   value={"todos"} disabled>Todos</MenuItem>
-             
-              {filterConcept?.map((conceptItem,index)=>{
-                return <MenuItem key={index} value={conceptItem}>{conceptItem}</MenuItem>
+      <Box sx={{ minWidth: 120 }}>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">
+            Filtrar por Concepto:
+          </InputLabel>
+          <Select
+            autoWidth
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={filterType}
+            label="Age"
+            onChange={handleChange}
+          >
+            <MenuItem value={"todos"}>Todos</MenuItem>
 
-              })}
-             
-            </Select>
-          </FormControl>
-        </Box>
-      
+            {filterConcept?.map((conceptItem, index) => {
+              return (
+                <MenuItem key={index} value={conceptItem}>
+                  {conceptItem}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+      </Box>
+
       {!listOnHome && (
         <Box sx={{ minWidth: 120 }}>
           <FormControl>
