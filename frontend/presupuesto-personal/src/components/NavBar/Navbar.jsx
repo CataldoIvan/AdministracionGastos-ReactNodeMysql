@@ -3,13 +3,15 @@ import "./NavBar.css";
 import { Link, Route, Router } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-
+import { useAuth0 } from "@auth0/auth0-react";
+import LogoutButton from "../LogoutButton/LogoutButton";
 const Navbar = () => {
   const [value, setValue] = React.useState(0);
+  const { isAuthenticated } = useAuth0();
 
   const handleChange = (event, newValue) => {
     console.log(newValue);
-    setValue(newValue);
+    setValue(event.target.value);
   };
   return (
     <div className="navbar">
@@ -21,20 +23,23 @@ const Navbar = () => {
         <Link to="/" onClick={() => setValue(0)}>
           <Tab label="Home" />
         </Link>
+        {isAuthenticated && (
+          <>
+            <Link to="/ListMovements">
+              <Tab label="Listado de Movimientos" value="1" onClick={handleChange} />
+            </Link>
+            <Link to="/add" >
+              <Tab label="Agregar" onClick={() => setValue(2)} />
+            </Link>
 
-        <Link to="/add">
-          <Tab label="Agregar" onClick={() => setValue(1)} />
-        </Link>
 
-        <Link  to="/ListMovements">
-          <Tab onClick={() => setValue(2)} label="Listado de Movimientos" />
-        </Link>
-        <Link  to="#">
-          <Tab  onClick={() => setValue(3)} label="Logout" />
-        </Link>
+            <Link to="/profile">
+              <Tab label="Profile" onClick={() => setValue(3)} />
+            </Link>
+            <LogoutButton />
+          </>
+        )}
       </Tabs>
-
-     
     </div>
   );
 };

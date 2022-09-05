@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./ListMov.css"
+import "./ListMov.css";
 import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -17,6 +17,8 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
+
+import { useAuth0 } from "@auth0/auth0-react";
 /* SELECt DISTINCT `concept` FROM`movements` */
 /* {
       id: 1,
@@ -44,6 +46,7 @@ const ListMov = ({ onHome }) => {
   const [filterType, setFilterType] = useState("todos");
   const [filterConcept, setFilterConcept] = useState([]);
   const listOnHome = onHome || false;
+  const { isAuthenticated, user } = useAuth0();
 
   useEffect(() => {
     getAllMovement();
@@ -53,9 +56,9 @@ const ListMov = ({ onHome }) => {
     /* const response=await fetch("http://localhost:3030")
           console.log(response);
            */
-
+    console.log(user.email);
     const res = await axios.get("http://localhost:3030", {
-      params: { listFor: filterType },
+      params: { listFor: filterType, userEmail: user.email },
     });
     console.log(res.data);
     setList(res.data);
@@ -95,54 +98,55 @@ const ListMov = ({ onHome }) => {
   return (
     <div className="listmov">
       <div className="filters">
+        {!listOnHome && (
+          <Box sx={{ mr: 1, minWidth: 160 }}>
+            <FormControl className="select-filter" fullWidth>
+              <InputLabel id="demo-simple-select-label">
+                Filtrar por Concepto:
+              </InputLabel>
+              <Select
+                autoWidth
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={filterType}
+                label="Age"
+                onChange={handleChange}
+              >
+                <MenuItem value={"todos"}>Todos</MenuItem>
 
-      {!listOnHome && (
-        <Box  sx={{mr:1, minWidth: 160 }}>
-          <FormControl className="select-filter" fullWidth>
-            <InputLabel id="demo-simple-select-label">
-              Filtrar por Concepto:
-            </InputLabel>
-            <Select
-              autoWidth
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={filterType}
-              label="Age"
-              onChange={handleChange}
-            >
-              <MenuItem value={"todos"}>Todos</MenuItem>
+                {filterConcept?.map((conceptItem, index) => {
+                  return (
+                    <MenuItem key={index} value={conceptItem}>
+                      {conceptItem}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Box>
+        )}
 
-              {filterConcept?.map((conceptItem, index) => {
-                return (
-                  <MenuItem key={index} value={conceptItem}>
-                    {conceptItem}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-        </Box>
-      )}
-
-      {!listOnHome && (
-        <Box sx={{mr:1,mb:1, minWidth: 150 }}>
-          <FormControl className="select-filter" fullWidth>
-            <InputLabel id="demo-simple-select-label">Filtrar por:</InputLabel>
-            <Select
-              autoWidth
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={filterType}
-              label="Age"
-              onChange={handleChange}
-            >
-              <MenuItem value={"todos"}>Todos</MenuItem>
-              <MenuItem value={"ingreso"}>Ingreso</MenuItem>
-              <MenuItem value={"salida"}>Salida</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-      )}
+        {!listOnHome && (
+          <Box sx={{ mr: 1, mb: 1, minWidth: 150 }}>
+            <FormControl className="select-filter" fullWidth>
+              <InputLabel id="demo-simple-select-label">
+                Filtrar por:
+              </InputLabel>
+              <Select
+                autoWidth
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={filterType}
+                label="Age"
+                onChange={handleChange}
+              >
+                <MenuItem value={"todos"}>Todos</MenuItem>
+                <MenuItem value={"ingreso"}>Ingreso</MenuItem>
+                <MenuItem value={"salida"}>Salida</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        )}
       </div>
       <TableContainer component={Paper}>
         <Table

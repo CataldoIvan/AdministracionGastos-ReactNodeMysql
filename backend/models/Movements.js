@@ -18,6 +18,16 @@ const movement=db.define('movements',{
        
           type:DataTypes.STRING
         
+    },
+    userName:{
+       
+          type:DataTypes.STRING
+        
+    },
+    userEmail:{
+       
+          type:DataTypes.STRING
+        
     }
 }, {
     timestamps: false

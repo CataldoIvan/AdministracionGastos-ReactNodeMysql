@@ -9,6 +9,7 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useAuth0 } from "@auth0/auth0-react";
 const axios = require("axios");
 
 const currencies = [
@@ -23,11 +24,14 @@ const currencies = [
 ];
 
 const Form = () => {
+  const { isAuthenticated,user } = useAuth0();
   const [newMov, setNewMov] = useState({
     concept: null,
     amount: null,
     date: dayjs().toISOString(),
     type: "salida",
+    userName:user.name,
+    userEmail:user.email
   });
   let navigate = useNavigate();
 
