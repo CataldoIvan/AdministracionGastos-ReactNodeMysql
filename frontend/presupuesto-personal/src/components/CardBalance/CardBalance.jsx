@@ -7,6 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Box, ThemeProvider, createTheme } from '@mui/system';
+import LoginButton from "../LoginButton/LoginButton";
 
 const theme = createTheme({
   palette: {
@@ -44,6 +45,8 @@ const CardBalance = ({ text,balance }) => {
        
       </Box>
     </ThemeProvider>
+
+    <LoginButton/>
     </div>
   );
 };
