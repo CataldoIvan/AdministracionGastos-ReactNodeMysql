@@ -14,8 +14,8 @@ const axios = require("axios");
 
 const currencies = [
   {
-    value: "salidas",
-    label: "Salidas",
+    value: "salida",
+    label: "Salida",
   },
   {
     value: "ingreso",
@@ -43,17 +43,18 @@ const Form = () => {
     } else {
       setNewMov({ ...newMov, [e.target.name]: e.target.value });
     }
-    console.log(newMov);
+    //console.log(newMov);
   };
 
   const handleClick = async (e) => {
     e.preventDefault();
-    //console.log(newMov);
+  
+   
     const res = await axios.post("http://localhost:3030", newMov);
     console.log(res.status);
     if (res.status == 200) {
       navigate("/");
-    }
+    } 
   };
 
   return (

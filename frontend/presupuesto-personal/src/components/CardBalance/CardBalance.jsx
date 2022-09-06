@@ -1,52 +1,57 @@
 import React from "react";
-import "./CardBalance.css"
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Box, ThemeProvider, createTheme } from '@mui/system';
-import LoginButton from "../LoginButton/LoginButton";
+import "./CardBalance.css";
+import Button from "@mui/joy/Button";
+import Add from "@mui/icons-material/Add";
+import { Box, ThemeProvider, createTheme } from "@mui/system";
+
+import {  useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
     background: {
-      paper: '#fff',
+      paper: "#fff",
     },
     text: {
-      primary: '#173A5E',
-      secondary: '#46505A',
+      primary: "#173A5E",
+      secondary: "#46505A",
     },
-   
   },
 });
 
-const CardBalance = ({ text,balance }) => {
+const CardBalance = ({ text, balance }) => {
+  let navigate = useNavigate();
   return (
     <div className="balance">
-    
-
       <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          bgcolor: 'background.paper',
-          boxShadow: 1,
-          borderRadius: 2,
-          p: 2,
-          minWidth: 300,
-          
-        }}
-      >
-        <Box sx={{ color: 'text.secondary',fontSize: 24 }}>{text}</Box>
-        <Box sx={{ color: 'text.primary', fontSize: 34, fontWeight: 'bold' }}>
-          {balance}
+        <Box
+          sx={{
+            bgcolor: "background.paper",
+            boxShadow: 1,
+            borderRadius: 2,
+            p: 2,
+            minWidth: 300,
+          }}
+        >
+          <Box sx={{ color: "text.secondary", fontSize: 24 }}>{text}</Box>
+          <Box sx={{ color: "text.primary", fontSize: 34, fontWeight: "bold" }}>
+            {balance}
+          </Box>
         </Box>
-       
-      </Box>
-    </ThemeProvider>
-
-    <LoginButton/>
+      </ThemeProvider>
+      
+        <Button
+          sx={{ background:"rgb(0, 127, 255)",mt:2}}
+          startIcon={<Add />}
+          onClick={() => {
+            navigate("/add")
+          }}
+          
+        >
+          Agregar un nuevo registro
+        </Button>
+      
+     
+      
     </div>
   );
 };

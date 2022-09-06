@@ -20,30 +20,10 @@ import Box from "@mui/material/Box";
 
 import { useAuth0 } from "@auth0/auth0-react";
 /* SELECt DISTINCT `concept` FROM`movements` */
-/* {
-      id: 1,
-      concept: "comida",
-      amount: 1235,
-      date: 12 - 20 - 2022,
-      type: "ingreso",
-    },
-    {
-      id: 2,
-      concept: "amigos",
-      amount: 200,
-      date: 31 - 12 - 2000,
-      type: "salida",
-    },
-    {
-      id: 3,
-      concept: "juego",
-      amount: 750,
-      date: 31 - 12 - 2100,
-      type: "salida",
-    }, */
+
 const ListMov = ({ onHome }) => {
   const [list, setList] = useState([]);
-  const [filterType, setFilterType] = useState("todos");
+  const [filterType, setFilterType] = useState([]);
   const [filterConcept, setFilterConcept] = useState([]);
   const listOnHome = onHome || false;
   const { isAuthenticated, user } = useAuth0();
@@ -112,7 +92,7 @@ const ListMov = ({ onHome }) => {
                 label="Age"
                 onChange={handleChange}
               >
-                <MenuItem value={"todos"}>Todos</MenuItem>
+                <MenuItem selected value="todos">Todos</MenuItem>
 
                 {filterConcept?.map((conceptItem, index) => {
                   return (

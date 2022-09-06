@@ -1,13 +1,12 @@
 const movement = require("../models/Movements");
 const { Op } = require("sequelize");
 
-
 const getAll = async (req, res) => {
   console.log(req.query);
-  if (req.query.listFor !== "todos") {
+  if (req.query.listFor !== "todos" && req.query.listFor!==undefined) {
     try {
       const movements = await movement.findAll({
-        where:{
+        where: {
           userEmail: req.query.userEmail,
           [Op.or]: [
             { type: req.query.listFor },
@@ -15,14 +14,14 @@ const getAll = async (req, res) => {
           ],
         },
       });
-      console.log(movements);
-      res.json(movements);
-      /* if (movements === null) {
+     /*  console.log(movements);
+      res.json(movements); */
+      if (movements === null) {
       return res
         .status(405)
         .json({ error: " No se pudieron obtener el listado de movimientos" });
     }
-    res.json(movements); */
+    res.json(movements);
     } catch (error) {
       throw new Error(error);
     }
@@ -30,17 +29,19 @@ const getAll = async (req, res) => {
     try {
       const movements = await movement.findAll({
         where: {
-          userEmail: req.query.userEmail
-        }
+          userEmail: req.query.userEmail,
+        },
       });
       console.log(movements);
       /* res.json(movements); */
       if (movements === null) {
-      return res
-        .status(405)
-        .json({ error: " No se pudieron obtener el listado de movimientos" });
-    }
-    res.json(movements);
+        return res
+          .status(405)
+          .json({ error: " No se pudieron obtener el listado de movimientos" });
+      }else{
+
+        res.json(movements);
+      }
     } catch (error) {
       throw new Error(error);
     }
@@ -75,14 +76,26 @@ const getForId = async (req, res) => {
 
 const createMov = async (req, res) => {
   console.log(req.body);
-  const { concept, amount, date, type,userName,userEmail } = req.body;
+  if (req.body.type == "salida"){
+
+    req.body.amount = req.body.amount * Math.sign(-req.body.amount);
+  }
+
+  const { concept, amount, date, type, userName, userEmail } = req.body;
   if (!concept || !amount || !date || !type || !userName || !userEmail) {
     return res.status(400).json({
       error: "Todos lo campos deben estar completos",
     });
   }
   try {
-    const newMovement = await movement.create({ concept, amount, date, type,userName,userEmail  });
+    const newMovement = await movement.create({
+      concept,
+      amount,
+      date,
+      type,
+      userName,
+      userEmail,
+    });
     if (newMovement === null || newMovement === 0) {
       throw "NO se pudo crear el movimiento";
     } else {
