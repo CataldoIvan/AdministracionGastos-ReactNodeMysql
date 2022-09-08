@@ -44,9 +44,7 @@ const Form = () => {
       navigate("/ListMovements");
    }
   };
-  if(!data.state) {return navigate("/ListMovements");}else{
-
-    
+  if(!data.state) {return navigate("/ListMovements");}else{    
     return (
       <Box
         component="form"

@@ -47,5 +47,35 @@ export const helpRequest = () => {
       
     }
   };
-  return { getBalance, getAllMovements,addNewMovement};
+  const editMovement=(id,movement)=>{
+    try {
+      const res = await axios.put(`http://localhost:3030/edit/${id}`, movement);
+      console.log(res);
+      if(res.status==200){
+        return res
+     }      
+    } catch (error) {
+      return {
+        error: true,
+        status: error.status || "00",
+        statusText: error.statusText || "Ocurrio un error en la conexion con la Api",
+      }
+    }
+  }
+  const deleteMovement=(id)=>{
+    try {
+      const res = await axios.delete(`http://localhost:3030/${id}`);
+      
+      if(res.status==200){
+        return res
+     }      
+    } catch (error) {
+      return {
+        error: true,
+        status: error.status || "00",
+        statusText: error.statusText || "Ocurrio un error en la conexion con la Api",
+      }
+    }
+  }
+  return { getBalance, getAllMovements,addNewMovement,editMovement,deleteMovement};
 };
