@@ -1,55 +1,72 @@
 const movement = require("../models/Movements");
 const { Op } = require("sequelize");
-
+let movements = null;
 const getAll = async (req, res) => {
-  console.log(req.query);
-  if (req.query.listFor !== "todos" && req.query.listFor!==undefined) {
-    try {
-      const movements = await movement.findAll({
-        where: {
-          userEmail: req.query.userEmail,
-          [Op.or]: [
-            { type: req.query.listFor },
-            { concept: req.query.listFor },
-          ],
-        },
-      });
-     /*  console.log(movements);
-      res.json(movements); */
-      if (movements === null) {
+  //console.log(JSON.parse(req.query.listFor)?.name || "no hay");
+  let filterValue = req.query.listFor ? JSON.parse(req.query.listFor) : "todos";
+  const getAllMovForUser = async () => {
+    console.log("************************");
+    console.log(req.query.userEmail);
+    return movement.findAll({
+      where: {
+        userEmail: req.query.userEmail,
+      },
+    });
+  };
+  console.log(filterValue);
+  try {
+    switch (filterValue?.name) {
+      case "type":
+        if (filterValue.value === "todos") {
+          movements = await getAllMovForUser();
+        } else {
+          movements = await movement.findAll({
+            where: {
+              userEmail: req.query.userEmail,
+              [Op.and]: [{ type: filterValue.value }],
+            },
+          });
+        }
+        break;
+      case "concept":
+        console.log(filterValue.value === "todos");
+        console.log(filterValue.name);
+        if (filterValue.value === "todos") {
+          movements = await getAllMovForUser();
+        } else {
+          movements = await movement.findAll({
+            where: {
+              userEmail: req.query.userEmail,
+              [Op.and]: [{ concept: filterValue.value }],
+            },
+          });
+        }
+
+        break;
+
+      default:
+        movements = await getAllMovForUser();
+        break;
+    }
+    if (movements === null) {
       return res
         .status(405)
         .json({ error: " No se pudieron obtener el listado de movimientos" });
     }
+   // console.log(movements);
     res.json(movements);
-    } catch (error) {
-      throw new Error(error);
-    }
-  } else {
-    try {
-      const movements = await movement.findAll({
-        where: {
-          userEmail: req.query.userEmail,
-        },
-      });
-      console.log(movements);
-      /* res.json(movements); */
-      if (movements === null) {
-        return res
-          .status(405)
-          .json({ error: " No se pudieron obtener el listado de movimientos" });
-      }else{
-
-        res.json(movements);
-      }
-    } catch (error) {
-      throw new Error(error);
-    }
+  } catch (error) {
+    console.log(error);
+    res.json(error);
   }
 };
 const getBalance = async (req, res) => {
   try {
-    const balance = await movement.sum("amount");
+    const balance = await movement.sum("amount", {
+      where: {
+        userEmail: req.query.userEmail,
+      },
+    });
     console.log(balance);
     if (balance === null) {
       return res
@@ -58,7 +75,8 @@ const getBalance = async (req, res) => {
     }
     res.json(balance);
   } catch (error) {
-    throw new Error(error);
+    console.log(error);
+    res.json(error);
   }
 };
 
@@ -76,8 +94,7 @@ const getForId = async (req, res) => {
 
 const createMov = async (req, res) => {
   console.log(req.body);
-  if (req.body.type == "salida"){
-
+  if (req.body.type == "salida") {
     req.body.amount = req.body.amount * Math.sign(-req.body.amount);
   }
 

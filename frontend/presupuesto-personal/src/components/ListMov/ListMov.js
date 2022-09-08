@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./ListMov.css";
-import { IconButton } from "@mui/material";
+import { Alert, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Table from "@mui/material/Table";
@@ -11,12 +11,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
+import { helpRequest } from "../../Helpers/helperRequest";
 
 import { useAuth0 } from "@auth0/auth0-react";
 /* SELECt DISTINCT `concept` FROM`movements` */
@@ -27,23 +28,21 @@ const ListMov = ({ onHome }) => {
   const [filterConcept, setFilterConcept] = useState([]);
   const listOnHome = onHome || false;
   const { isAuthenticated, user } = useAuth0();
+  let navigate = useNavigate();
 
   useEffect(() => {
-    getAllMovement();
+    helpRequest()
+      .getAllMovements(user.email, filterType)
+      .then((res) => {
+        !res.error ? (
+          <>{(setList(res), listOfCategory(res))}</>
+        ) : (
+          <>{console.log(res.statusText), alert(res.statusText)}</>
+        );
+      });
   }, [filterType]);
 
-  const getAllMovement = async () => {
-    /* const response=await fetch("http://localhost:3030")
-          console.log(response);
-           */
-    console.log(user.email);
-    const res = await axios.get("http://localhost:3030", {
-      params: { listFor: filterType, userEmail: user.email },
-    });
-    console.log(res.data);
-    setList(res.data);
-    listOfCategory(res.data);
-  };
+  
 
   const listOfCategory = (list) => {
     const result = list.reduce((acc, item) => {
@@ -53,17 +52,14 @@ const ListMov = ({ onHome }) => {
       console.log(acc);
       return acc;
     }, []);
-    console.log(result);
+    
     setFilterConcept(result);
-    if (list) {
-    }
+   
   };
   const handleChange = async (event) => {
-    //console.log(event.target.value);
-    setFilterType(event.target.value);
-    /*  const res = await axios.get("http://localhost:3030",{params:{listFor:filterType}});
-      console.log(res);
-      setList(res.data); */
+    
+    setFilterType(event.target);
+    
   };
 
   //delete Movement
@@ -72,9 +68,11 @@ const ListMov = ({ onHome }) => {
 
     const res = await axios.delete(`http://localhost:3030/${id}`);
     console.log(res);
-    getAllMovement();
+    // getAllMovement();
   };
-
+  if (!isAuthenticated) {
+    return navigate("/");
+  }
   return (
     <div className="listmov">
       <div className="filters">
@@ -88,15 +86,18 @@ const ListMov = ({ onHome }) => {
                 autoWidth
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={filterType}
+                value={filterType.value}
                 label="Age"
+                name="concept"
                 onChange={handleChange}
               >
-                <MenuItem selected value="todos">Todos</MenuItem>
+                <MenuItem selected name="concept" value="todos">
+                  Todos
+                </MenuItem>
 
                 {filterConcept?.map((conceptItem, index) => {
                   return (
-                    <MenuItem key={index} value={conceptItem}>
+                    <MenuItem key={index} name="concept" value={conceptItem}>
                       {conceptItem}
                     </MenuItem>
                   );
@@ -114,9 +115,10 @@ const ListMov = ({ onHome }) => {
               </InputLabel>
               <Select
                 autoWidth
+                name="type"
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={filterType}
+                value={filterType.value}
                 label="Age"
                 onChange={handleChange}
               >
@@ -156,9 +158,7 @@ const ListMov = ({ onHome }) => {
                 <TableCell component="th" scope="row" size="medium">
                   {row.concept}
                 </TableCell>
-                <TableCell align="right">
-                  {row.type === "salida" ? "-" : null}${row.amount}
-                </TableCell>
+                <TableCell align="right">${row.amount}</TableCell>
                 <TableCell align="right">{row.type}</TableCell>
                 {!listOnHome && (
                   <TableCell align="right">
@@ -180,11 +180,11 @@ const ListMov = ({ onHome }) => {
               </TableRow>
             ))}
           </TableBody>
-          {!list && (
+          {list.length == 0 ? (
             <caption style={{ textAlign: "center" }}>
               Aun no hay datos cargados
             </caption>
-          )}
+          ) : null}
         </Table>
       </TableContainer>
     </div>
