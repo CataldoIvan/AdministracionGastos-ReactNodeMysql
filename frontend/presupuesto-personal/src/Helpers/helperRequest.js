@@ -32,5 +32,20 @@ export const helpRequest = () => {
       })
       .catch((error) => console.log(error));
   };
-  return { getBalance, getAllMovements};
+  const addNewMovement = (newMov) => {
+    try {
+      const res = await axios.post("http://localhost:3030", newMov);
+      if (res.status == 200) {
+        return res
+      }       
+    } catch (error) {
+      return {
+        error: true,
+        status: error.status || "00",
+        statusText: error.statusText || "Ocurrio un error en la conexion con la Api",
+      }
+      
+    }
+  };
+  return { getBalance, getAllMovements,addNewMovement};
 };
