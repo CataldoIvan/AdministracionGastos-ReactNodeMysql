@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 let movements = null;
 const getAll = async (req, res) => {
   //console.log(JSON.parse(req.query.listFor)?.name || "no hay");
-  let filterValue = req.query.listFor ? JSON.parse(req.query.listFor) : "todos";
+  let filterValue = req.query.listFor ? JSON.parse(req.query.listFor) : "all";
   const getAllMovForUser = async () => {
     console.log("************************");
     console.log(req.query.userEmail);
@@ -17,7 +17,7 @@ const getAll = async (req, res) => {
   try {
     switch (filterValue?.name) {
       case "type":
-        if (filterValue.value === "todos") {
+        if (filterValue.value === "all") {
           movements = await getAllMovForUser();
         } else {
           movements = await movement.findAll({
@@ -29,9 +29,9 @@ const getAll = async (req, res) => {
         }
         break;
       case "concept":
-        console.log(filterValue.value === "todos");
+        console.log(filterValue.value === "all");
         console.log(filterValue.name);
-        if (filterValue.value === "todos") {
+        if (filterValue.value === "all") {
           movements = await getAllMovForUser();
         } else {
           movements = await movement.findAll({
@@ -94,7 +94,7 @@ const getForId = async (req, res) => {
 
 const createMov = async (req, res) => {
   console.log(req.body);
-  if (req.body.type == "salida") {
+  if (req.body.type == "output") {
     req.body.amount = req.body.amount * Math.sign(-req.body.amount);
   }
 
@@ -134,8 +134,15 @@ const deleteMov = async (req, res) => {
 
 const editMov = async (req, res) => {
   const idToEdith = req.params.id;
+  console.log(req);
   try {
-    await movement.update(
+    const { concept, amount, date, type } = req.body;
+  if (!concept || !amount || !date || !type ) {
+    return res.status(400).json({
+      error: "Todos lo campos deben estar completos",
+    });
+  }
+   /*  await movement.update(
       {
         ...req.body,
       },
@@ -148,9 +155,11 @@ const editMov = async (req, res) => {
 
     const result = await movement.findByPk(idToEdith);
 
-    res.json(result);
+    res.json(result); */
   } catch (error) {
-    res.json(error);
+    return res.status(400).json({
+      error: "Todos lo campos deben estar completos",
+    });
   }
 };
 

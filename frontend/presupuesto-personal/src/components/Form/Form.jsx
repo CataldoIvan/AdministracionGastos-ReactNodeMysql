@@ -10,16 +10,18 @@ import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useAuth0 } from "@auth0/auth0-react";
-const axios = require("axios");
+import { helpRequest } from "../../Helpers/helperRequest";
+import swal from 'sweetalert';
+
 
 const currencies = [
   {
-    value: "salida",
-    label: "Salida",
+    value: "output",
+    label: "Output",
   },
   {
-    value: "ingreso",
-    label: "Ingreso",
+    value: "entry",
+    label: "Entry",
   },
 ];
 
@@ -29,7 +31,7 @@ const Form = () => {
     concept: null,
     amount: null,
     date: dayjs().toISOString(),
-    type: "salida",
+    type: "output",
     userName:user.name,
     userEmail:user.email
   });
@@ -46,15 +48,21 @@ const Form = () => {
     //console.log(newMov);
   };
 
-  const handleClick = async (e) => {
+  const handleClick =  (e) => {
     e.preventDefault();
-  
-   
-    const res = await axios.post("http://localhost:3030", newMov);
-    console.log(res.status);
-    if (res.status == 200) {
-      navigate("/");
-    } 
+    
+   helpRequest().addNewMovement(newMov).then(res=>{
+
+     if (res.status == 200) {
+      
+       navigate("/");
+     } else if(res.error){
+      console.log(res);
+      swal("No se pudo crear", res.statusText, "error");
+    
+     }
+   })
+    
   };
 
   return (
@@ -82,7 +90,7 @@ const Form = () => {
           <Stack id="pickerDate">
             <DesktopDatePicker
             required
-              label="Date desktop"
+              label="Date"
               name="date"
               inputFormat="DD/MM/YYYY"
               value={newMov.date}
@@ -96,7 +104,7 @@ const Form = () => {
         <TextField
         required
           id="outlined-number"
-          label="Importe"
+          label="Import"
           type="number"
           InputLabelProps={{
             shrink: true,
@@ -107,7 +115,7 @@ const Form = () => {
         <TextField
           id="filled-select-currency-native"
           select
-          label="Tipo de Gasto"
+          label="Expense Type"
           /* value={currency} */
           /* onChange={handleChange} */
           SelectProps={{
@@ -133,7 +141,7 @@ const Form = () => {
           handleClick(e);
         }}
       >
-        Crear
+        Add
       </Button>
     </Box>
   );

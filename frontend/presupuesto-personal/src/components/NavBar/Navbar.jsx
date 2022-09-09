@@ -26,10 +26,10 @@ const Navbar = () => {
         {isAuthenticated && (
           <>
             <Link to="/ListMovements">
-              <Tab label="Listado de Movimientos" value="1" onClick={handleChange} />
+              <Tab label="list movement" value="1" onClick={handleChange} />
             </Link>
             <Link to="/add" >
-              <Tab label="Agregar" onClick={() => setValue(2)} />
+              <Tab label="Add" onClick={() => setValue(2)} />
             </Link>
 
 

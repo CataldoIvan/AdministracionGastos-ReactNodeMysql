@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import dayjs from "dayjs";
-import "./FormEdit.css"
+import "./FormEdit.css";
 import { useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
@@ -11,40 +11,45 @@ import Stack from "@mui/material/Stack";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-const axios = require("axios");
+import { helpRequest } from "../../Helpers/helperRequest";
+import swal from "sweetalert";
 
+const axios = require("axios");
 
 const Form = () => {
   const data = useLocation();
   let navigate = useNavigate();
-  
+
   const [movement, setMovement] = useState({
     concept: data.state?.concept || "",
     amount: data.state?.amount || "",
     date: data.state?.date || "",
     type: data.state?.type || "",
   });
- 
-  const handleChange = (e,pickDate=false) => {
-    console.log(e);
-    console.log(pickDate);
-    if(pickDate){
-    setMovement({ ...movement,date: e.toISOString() });
-    }else{
+
+  const handleChange = (e, pickDate = false) => {
+    if (pickDate) {
+      setMovement({ ...movement, date: e.toISOString() });
+    } else {
       setMovement({ ...movement, [e.target.name]: e.target.value });
     }
   };
 
   const handleClick = async (e) => {
     e.preventDefault();
-    console.log(movement);
-    const res = await axios.put(`http://localhost:3030/edit/${data.state.id}`, movement);
-    console.log(res);
-    if(res.status==200){
-      navigate("/ListMovements");
-   }
+    helpRequest()
+      .editMovement(data.state.id, movement)
+      .then((res) => {
+        if (res.status == 200) {
+          navigate("/ListMovements");
+        } else if (res.error) {
+          swal("No se pudo editar", res.statusText, "error");
+        }
+      });
   };
-  if(!data.state) {return navigate("/ListMovements");}else{    
+  if (!data.state) {
+    return navigate("/ListMovements");
+  } else {
     return (
       <Box
         component="form"
@@ -54,7 +59,6 @@ const Form = () => {
         noValidate
         autoComplete="off"
       >
-       {console.log(data)}
         <div>
           <TextField
             id="outlined-password-input"
@@ -65,15 +69,16 @@ const Form = () => {
             name="concept"
             defaultValue={movement.concept}
           />
-          <LocalizationProvider  dateAdapter={AdapterDayjs}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Stack id="pickerDate">
               <DesktopDatePicker
-                label="Date desktop"
+                label="Date"
                 name="date"
                 inputFormat="DD/MM/YYYY"
                 value={movement.date}
-                onChange={(e)=>{
-                  handleChange(e,true)}}
+                onChange={(e) => {
+                  handleChange(e, true);
+                }}
                 renderInput={(params) => <TextField {...params} />}
               />
             </Stack>
@@ -91,7 +96,7 @@ const Form = () => {
           />
           <TextField
             id="filled-select-currency-native"
-            label="Tipo de Gasto"
+            label="Expense Type"
             SelectProps={{
               native: true,
             }}
@@ -108,7 +113,7 @@ const Form = () => {
             handleClick(e);
           }}
         >
-          Confirmar
+          Confirm edit
         </Button>
       </Box>
     );

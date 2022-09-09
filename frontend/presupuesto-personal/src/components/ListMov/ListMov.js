@@ -37,12 +37,10 @@ const ListMov = ({ onHome }) => {
         !res.error ? (
           <>{(setList(res), listOfCategory(res))}</>
         ) : (
-          <>{console.log(res.statusText), alert(res.statusText)}</>
+          <>{alert(res.statusText)}</>
         );
       });
   }, [filterType]);
-
-  
 
   const listOfCategory = (list) => {
     const result = list.reduce((acc, item) => {
@@ -52,14 +50,11 @@ const ListMov = ({ onHome }) => {
       console.log(acc);
       return acc;
     }, []);
-    
+
     setFilterConcept(result);
-   
   };
   const handleChange = async (event) => {
-    
     setFilterType(event.target);
-    
   };
 
   //delete Movement
@@ -67,8 +62,16 @@ const ListMov = ({ onHome }) => {
     e.preventDefault();
 
     const res = await axios.delete(`http://localhost:3030/${id}`);
-    console.log(res);
-    // getAllMovement();
+
+    helpRequest()
+      .getAllMovements(user.email, filterType)
+      .then((res) => {
+        !res.error ? (
+          <>{(setList(res), listOfCategory(res))}</>
+        ) : (
+          <>{alert(res.statusText)}</>
+        );
+      });
   };
   if (!isAuthenticated) {
     return navigate("/");
@@ -80,7 +83,7 @@ const ListMov = ({ onHome }) => {
           <Box sx={{ mr: 1, minWidth: 160 }}>
             <FormControl className="select-filter" fullWidth>
               <InputLabel id="demo-simple-select-label">
-                Filtrar por Concepto:
+                Filter Concepts:
               </InputLabel>
               <Select
                 autoWidth
@@ -92,7 +95,7 @@ const ListMov = ({ onHome }) => {
                 onChange={handleChange}
               >
                 <MenuItem selected name="concept" value="todos">
-                  Todos
+                  All
                 </MenuItem>
 
                 {filterConcept?.map((conceptItem, index) => {
@@ -111,7 +114,7 @@ const ListMov = ({ onHome }) => {
           <Box sx={{ mr: 1, mb: 1, minWidth: 150 }}>
             <FormControl className="select-filter" fullWidth>
               <InputLabel id="demo-simple-select-label">
-                Filtrar por:
+                Filter amount:
               </InputLabel>
               <Select
                 autoWidth
@@ -122,9 +125,9 @@ const ListMov = ({ onHome }) => {
                 label="Age"
                 onChange={handleChange}
               >
-                <MenuItem value={"todos"}>Todos</MenuItem>
-                <MenuItem value={"ingreso"}>Ingreso</MenuItem>
-                <MenuItem value={"salida"}>Salida</MenuItem>
+                <MenuItem value={"all"}>All</MenuItem>
+                <MenuItem value={"entry"}>Entry</MenuItem>
+                <MenuItem value={"output"}>Output</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -139,50 +142,52 @@ const ListMov = ({ onHome }) => {
         >
           <TableHead>
             <TableRow>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Concepto</TableCell>
-              <TableCell align="right">Monto</TableCell>
-              <TableCell align="right">Tipo</TableCell>
-              {!listOnHome && <TableCell align="right">Accion</TableCell>}
+              <TableCell>Date</TableCell>
+              <TableCell>Concept</TableCell>
+              <TableCell align="right">Amount</TableCell>
+              <TableCell align="right">type</TableCell>
+              {!listOnHome && <TableCell align="right">Action</TableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
-            {list?.map((row) => (
-              <TableRow
-                key={row.id}
-                /* sx={{ "&:last-child td, &:last-child th": { border: 1 } }} */
-              >
-                <TableCell component="th" scope="row" size="medium">
-                  {new Date(row.date).toLocaleDateString("en-GB").slice(0, 10)}
-                </TableCell>
-                <TableCell component="th" scope="row" size="medium">
-                  {row.concept}
-                </TableCell>
-                <TableCell align="right">${row.amount}</TableCell>
-                <TableCell align="right">{row.type}</TableCell>
-                {!listOnHome && (
-                  <TableCell align="right">
-                    <IconButton edge="end" aria-label="edit">
-                      <Link to="/edit" state={row}>
-                        <EditIcon></EditIcon>
-                      </Link>
-                    </IconButton>
-                    &nbsp;&nbsp;
-                    <IconButton edge="end" aria-label="delete">
-                      <DeleteIcon
-                        onClick={(e) => {
-                          handleClick(e, row.id);
-                        }}
-                      />
-                    </IconButton>
+            {list?.map((row, index) => {
+              if (listOnHome && index >= 10) return null;
+              return (
+                <TableRow key={row.id}>
+                  <TableCell component="th" scope="row" size="medium">
+                    {new Date(row.date)
+                      .toLocaleDateString("en-GB")
+                      .slice(0, 10)}
                   </TableCell>
-                )}
-              </TableRow>
-            ))}
+                  <TableCell component="th" scope="row" size="medium">
+                    {row.concept}
+                  </TableCell>
+                  <TableCell align="right">${row.amount}</TableCell>
+                  <TableCell align="right">{row.type}</TableCell>
+                  {!listOnHome && (
+                    <TableCell align="right">
+                      <IconButton edge="end" aria-label="edit">
+                        <Link to="/edit" state={row}>
+                          <EditIcon></EditIcon>
+                        </Link>
+                      </IconButton>
+                      &nbsp;&nbsp;
+                      <IconButton edge="end" aria-label="delete">
+                        <DeleteIcon
+                          onClick={(e) => {
+                            handleClick(e, row.id);
+                          }}
+                        />
+                      </IconButton>
+                    </TableCell>
+                  )}
+                </TableRow>
+              );
+            })}
           </TableBody>
           {list.length == 0 ? (
             <caption style={{ textAlign: "center" }}>
-              Aun no hay datos cargados
+              No data loaded yet
             </caption>
           ) : null}
         </Table>

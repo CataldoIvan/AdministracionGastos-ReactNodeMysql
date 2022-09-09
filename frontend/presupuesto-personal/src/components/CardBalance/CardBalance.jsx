@@ -46,10 +46,10 @@ const CardBalance = ({ user }) => {
           }}
         >
           <Box sx={{ color: "text.secondary", fontSize: 24 }}>
-            Saldo de la cuenta{" "}
+            Account balance{" "}
           </Box>
           <Box sx={{ color: "text.primary", fontSize: 34, fontWeight: "bold" }}>
-            {balance ? balance : "$0"}
+            {balance ?`$${balance}` : "$0"}
           </Box>
         </Box>
       </ThemeProvider>
@@ -61,7 +61,7 @@ const CardBalance = ({ user }) => {
           navigate("/add");
         }}
       >
-        Agregar un nuevo registro
+        Add a new register
       </Button>
     </div>
   );

@@ -27,12 +27,20 @@ export const helpRequest = () => {
         params: { userEmail: email },
       })
       .then((res) => {
-        console.log(res.data);
+      if(res.status==200){
         return res.data;
+      }else{
+        return {
+          error: true,
+          status: res.status || "00",
+          statusText: res.response.data.error || "Ocurrio un error en la conexion con la Api",
+        }
+      }
+        
       })
       .catch((error) => console.log(error));
   };
-  const addNewMovement = (newMov) => {
+  const addNewMovement = async(newMov) => {
     try {
       const res = await axios.post("http://localhost:3030", newMov);
       if (res.status == 200) {
@@ -42,12 +50,12 @@ export const helpRequest = () => {
       return {
         error: true,
         status: error.status || "00",
-        statusText: error.statusText || "Ocurrio un error en la conexion con la Api",
+        statusText: error.response.data.error || "Ocurrio un error en la conexion con la Api",
       }
       
     }
   };
-  const editMovement=(id,movement)=>{
+  const editMovement= async(id,movement)=>{
     try {
       const res = await axios.put(`http://localhost:3030/edit/${id}`, movement);
       console.log(res);
@@ -55,14 +63,16 @@ export const helpRequest = () => {
         return res
      }      
     } catch (error) {
+      console.log(error);
+
       return {
         error: true,
         status: error.status || "00",
-        statusText: error.statusText || "Ocurrio un error en la conexion con la Api",
+        statusText: error.response.data.error || "Ocurrio un error en la conexion con la Api",
       }
     }
   }
-  const deleteMovement=(id)=>{
+  const deleteMovement=async(id)=>{
     try {
       const res = await axios.delete(`http://localhost:3030/${id}`);
       
