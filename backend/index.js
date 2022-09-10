@@ -15,7 +15,6 @@ const app = express()
   }
 })();
 
-
 //middleware
 app.use(express.json()); //recibir inf
 app.use(cors()); //hab a otras app a realizar peticiones a nuesta app

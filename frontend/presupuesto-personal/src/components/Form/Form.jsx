@@ -86,10 +86,11 @@ const Form = () => {
           required
         />
 
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Stack id="pickerDate">
+        <LocalizationProvider select dateAdapter={AdapterDayjs}>
+          <Stack id="pickerDate" select>
             <DesktopDatePicker
             required
+            
               label="Date"
               name="date"
               inputFormat="DD/MM/YYYY"
@@ -105,6 +106,7 @@ const Form = () => {
         required
           id="outlined-number"
           label="Import"
+          inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
           type="number"
           InputLabelProps={{
             shrink: true,

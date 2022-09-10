@@ -7,6 +7,7 @@ import Home from './components/Home/Home';
 import ListMov from './components/ListMov/ListMov';
 import FormEdit from "./components/FormEdit/FormEdit"
 import Profile from './components/Profile/Profile';
+import Footer from './components/Footer/Footer';
 
 function App() {
   return (
@@ -25,6 +26,8 @@ function App() {
                 <Route path='*' element={<Home/>} />
 
             </Routes>
+
+            <Footer/>
             
             </BrowserRouter>
       </header>
