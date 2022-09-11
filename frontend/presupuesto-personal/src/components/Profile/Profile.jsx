@@ -11,7 +11,7 @@ const Profile = () => {
   return (
     isAuthenticated && (
       <div>
-        {console.log(user)}
+        {}
         <img src={user.picture||'https://w7.pngwing.com/pngs/627/693/png-transparent-computer-icons-user-user-icon-thumbnail.png'} alt={user.name} />
         <h2>{user.name}</h2>
         <p>{user.email}</p>

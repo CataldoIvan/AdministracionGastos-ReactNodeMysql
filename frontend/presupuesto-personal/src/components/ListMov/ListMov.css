@@ -1,16 +1,18 @@
-
-
-
-
-
-.listmov{
-    margin: 5px;
-    min-width: 400px;
-    padding-bottom: 100px;
+.listmov {
+  margin: 5px;
+  padding-bottom: 100px;
+  margin: 0 0 20px 0;
 }
 
-.filters{
-    display: flex;
-    justify-content: end;
-   
+.filters {
+  display: flex;
+  justify-content: end;
+}
+
+@media only screen and (max-width: 600px) {
+  .actions {
+    display: grid;
+   /*  align-items: center;
+    justify-content: center; */
+  }
 }

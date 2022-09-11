@@ -6,21 +6,25 @@ import ListMov from "../ListMov/ListMov";
 import LoginButton from "../LoginButton/LoginButton";
 import { useAuth0 } from "@auth0/auth0-react";
 import { getAllMovements } from "../../Helpers/helperRequest";
+import { Grid } from "@mui/material";
 const axios = require("axios");
 
 const Home = () => {
-  const { isAuthenticated, user } = useAuth0();
+  const { isAuthenticated, user,isLoading } = useAuth0();
 
+  if (isLoading) {
+    return <div>Loading ...</div>;
+  }
   if (!isAuthenticated) {
     return <LoginButton />;
   }
 
   if (isAuthenticated) {
     return (
-      <div className="home">
-        <CardBalance user={user} />
-        <ListMov onHome={true} user={user} />
-      </div>
+      <Grid container className="home">
+        <CardBalance xs={12} user={user} />
+        <ListMov xs={12}  onHome={true} user={user} />
+      </Grid>
     );
   }
 };
