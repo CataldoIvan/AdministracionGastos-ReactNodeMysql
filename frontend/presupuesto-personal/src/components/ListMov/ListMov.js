@@ -27,13 +27,15 @@ const ListMov = ({ onHome }) => {
   const [filterType, setFilterType] = useState([]);
   const [filterConcept, setFilterConcept] = useState([]);
   const listOnHome = onHome || false;
-  const { isAuthenticated, user } = useAuth0();
+  const { isAuthenticated, user,isLoading } = useAuth0();
   let navigate = useNavigate();
-
+ 
   useEffect(() => {
     helpRequest()
       .getAllMovements(user.email, filterType)
       .then((res) => {
+        
+        
         !res.error ? (
           <>{(setList(res), listOfCategory(res))}</>
         ) : (
@@ -43,11 +45,11 @@ const ListMov = ({ onHome }) => {
   }, [filterType]);
 
   const listOfCategory = (list) => {
-    const result = list.reduce((acc, item) => {
+    const result = list?.reduce((acc, item) => {
       if (!acc.includes(item.concept)) {
         acc.push(item.concept);
       }
-      console.log(acc);
+      
       return acc;
     }, []);
 
@@ -73,6 +75,9 @@ const ListMov = ({ onHome }) => {
         );
       });
   };
+  if (isLoading) {
+    return <div>Loading ...</div>;
+  }
   if (!isAuthenticated) {
     return navigate("/");
   }
@@ -94,7 +99,7 @@ const ListMov = ({ onHome }) => {
                 name="concept"
                 onChange={handleChange}
               >
-                <MenuItem selected name="concept" value="todos">
+                <MenuItem selected name="concept" value="all">
                   All
                 </MenuItem>
 
@@ -135,7 +140,7 @@ const ListMov = ({ onHome }) => {
       </div>
       <TableContainer component={Paper}>
         <Table
-          /* sx={{ minWidth: 650 }} */
+          md={{ minWidth: "auto" }}
           size="small"
           padding="small"
           aria-label="simple table"
@@ -153,7 +158,7 @@ const ListMov = ({ onHome }) => {
             {list?.map((row, index) => {
               if (listOnHome && index >= 10) return null;
               return (
-                <TableRow key={row.id}>
+                <TableRow key={row.id}  >
                   <TableCell component="th" scope="row" size="medium">
                     {new Date(row.date)
                       .toLocaleDateString("en-GB")
@@ -165,7 +170,11 @@ const ListMov = ({ onHome }) => {
                   <TableCell align="right">${row.amount}</TableCell>
                   <TableCell align="right">{row.type}</TableCell>
                   {!listOnHome && (
-                    <TableCell align="right">
+                    <TableCell
+                      sx={{ display: { xs: "flex" },alignItems:'end' }}
+                      className="actions"
+                      align="right"
+                    >
                       <IconButton edge="end" aria-label="edit">
                         <Link to="/edit" state={row}>
                           <EditIcon></EditIcon>

@@ -1,40 +1,73 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./NavBar.css";
-import { Link, Route, Router } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import HomeIcon from "@mui/icons-material/Home";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import PersonIcon from "@mui/icons-material/Person";
 import { useAuth0 } from "@auth0/auth0-react";
 import LogoutButton from "../LogoutButton/LogoutButton";
-const Navbar = () => {
-  const [value, setValue] = React.useState(0);
-  const { isAuthenticated } = useAuth0();
 
+const Navbar = () => {
+  const [value, setValue] = useState(0);
+  const { isAuthenticated } = useAuth0();
+  useEffect(() => {}, [value]);
   const handleChange = (event, newValue) => {
-    console.log(newValue);
-    setValue(event.target.value);
+    setValue(event.target.name);
   };
+
   return (
     <div className="navbar">
       <Tabs
+        variant="scrollable"
         value={value}
         onChange={handleChange}
-        aria-label="disabled tabs example"
+        aria-label="scrollable navbar-mui"
+        id="navbar"
+        scrollButtons
+        allowScrollButtonsMobile
       >
         <Link to="/" onClick={() => setValue(0)}>
-          <Tab label="Home" />
+          <HomeIcon sx={{ fontSize: 40 }} />
+          <Tab sx={{ display: { xs: "none", md: "block" } }} label="Home" />
         </Link>
         {isAuthenticated && (
           <>
             <Link to="/ListMovements">
-              <Tab label="list movement" value="1" onClick={handleChange} />
+              <ListAltIcon
+                sx={{ fontSize: 40, display: { xs: "block", md: "none" } }}
+              />
+              <Tab
+                sx={{ display: { xs: "none", md: "block" } }}
+                label="list movement"
+                name={1}
+                onClick={handleChange}
+              />
             </Link>
-            <Link to="/add" >
-              <Tab label="Add" onClick={() => setValue(2)} />
+            <Link to="/add">
+              <AddCircleOutlineIcon
+                sx={{ fontSize: 40, display: { xs: "block", md: "none" } }}
+              />
+              <Tab
+                sx={{ display: { xs: "none", md: "block" } }}
+                label="Add"
+                name={2}
+                onClick={handleChange}
+              />
             </Link>
-
 
             <Link to="/profile">
-              <Tab label="Profile" onClick={() => setValue(3)} />
+              <PersonIcon
+                sx={{ fontSize: 40, display: { xs: "block", md: "none" } }}
+              />
+              <Tab
+                sx={{ display: { xs: "none", md: "block" } }}
+                label="Profile"
+                name={3}
+                onClick={handleChange}
+              />
             </Link>
             <LogoutButton />
           </>

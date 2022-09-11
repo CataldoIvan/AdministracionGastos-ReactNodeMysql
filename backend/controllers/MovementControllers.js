@@ -2,18 +2,18 @@ const movement = require("../models/Movements");
 const { Op } = require("sequelize");
 let movements = null;
 const getAll = async (req, res) => {
-  //console.log(JSON.parse(req.query.listFor)?.name || "no hay");
+  //
   let filterValue = req.query.listFor ? JSON.parse(req.query.listFor) : "all";
   const getAllMovForUser = async () => {
-    console.log("************************");
-    console.log(req.query.userEmail);
+    
+    
     return movement.findAll({
       where: {
         userEmail: req.query.userEmail,
       },
     });
   };
-  console.log(filterValue);
+  
   try {
     switch (filterValue?.name) {
       case "type":
@@ -29,8 +29,8 @@ const getAll = async (req, res) => {
         }
         break;
       case "concept":
-        console.log(filterValue.value === "all");
-        console.log(filterValue.name);
+        
+        
         if (filterValue.value === "all") {
           movements = await getAllMovForUser();
         } else {
@@ -53,10 +53,10 @@ const getAll = async (req, res) => {
         .status(405)
         .json({ error: " No se pudieron obtener el listado de movimientos" });
     }
-   // console.log(movements);
+   // 
     res.json(movements);
   } catch (error) {
-    console.log(error);
+    
     res.json(error);
   }
 };
@@ -67,7 +67,7 @@ const getBalance = async (req, res) => {
         userEmail: req.query.userEmail,
       },
     });
-    console.log(balance);
+    
     if (balance === null) {
       return res
         .status(405)
@@ -75,7 +75,7 @@ const getBalance = async (req, res) => {
     }
     res.json(balance);
   } catch (error) {
-    console.log(error);
+    
     res.json(error);
   }
 };
@@ -93,7 +93,7 @@ const getForId = async (req, res) => {
 };
 
 const createMov = async (req, res) => {
-  console.log(req.body);
+  
   if (req.body.type == "output") {
     req.body.amount = req.body.amount * Math.sign(-req.body.amount);
   }
@@ -123,7 +123,7 @@ const createMov = async (req, res) => {
   }
 };
 const deleteMov = async (req, res) => {
-  console.log(req);
+  
   try {
     movement.destroy({ where: { id: req.params.id } });
     res.json({ msj: "Movimiento eliminado correctamente" });
@@ -134,7 +134,7 @@ const deleteMov = async (req, res) => {
 
 const editMov = async (req, res) => {
   const idToEdith = req.params.id;
-  console.log(req);
+  
   try {
     const { concept, amount, date, type } = req.body;
   if (!concept || !amount || !date || !type ) {
@@ -142,7 +142,7 @@ const editMov = async (req, res) => {
       error: "Todos lo campos deben estar completos",
     });
   }
-   /*  await movement.update(
+    await movement.update(
       {
         ...req.body,
       },
@@ -155,7 +155,7 @@ const editMov = async (req, res) => {
 
     const result = await movement.findByPk(idToEdith);
 
-    res.json(result); */
+    res.json(result);
   } catch (error) {
     return res.status(400).json({
       error: "Todos lo campos deben estar completos",

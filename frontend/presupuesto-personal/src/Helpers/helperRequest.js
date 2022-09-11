@@ -38,7 +38,7 @@ export const helpRequest = () => {
       }
         
       })
-      .catch((error) => console.log(error));
+      .catch((error) => (error));
   };
   const addNewMovement = async(newMov) => {
     try {

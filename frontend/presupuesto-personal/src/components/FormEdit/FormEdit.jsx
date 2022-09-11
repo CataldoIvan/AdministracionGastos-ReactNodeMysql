@@ -13,12 +13,16 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { helpRequest } from "../../Helpers/helperRequest";
 import swal from "sweetalert";
+import { useAuth0 } from "@auth0/auth0-react";
+import LoginButton from "../LoginButton/LoginButton";
 
 const axios = require("axios");
 
 const Form = () => {
+  const { user, isAuthenticated, isLoading } = useAuth0();
   const data = useLocation();
   let navigate = useNavigate();
+  
 
   const [movement, setMovement] = useState({
     concept: data.state?.concept || "",
@@ -29,7 +33,13 @@ const Form = () => {
 
   const handleChange = (e, pickDate = false) => {
     if (pickDate) {
-      setMovement({ ...movement, date: e.toISOString() });
+      let dateTaxReg=new RegExp(/^(?:(?:(?:0?[1-9]|1\d|2[0-8])[/](?:0?[1-9]|1[0-2])|(?:29|30)[/](?:0?[13-9]|1[0-2])|31[/](?:0?[13578]|1[02]))[/](?:0{2,3}[1-9]|0{1,2}[1-9]\d|0?[1-9]\d{2}|[1-9]\d{3})|29[/]0?2[/](?:\d{1,2}(?:0[48]|[2468][048]|[13579][26])|(?:0?[48]|[13579][26]|[2468][048])00))$/)
+      
+      if(dateTaxReg.test(("00"+e.$D).slice(-2)+"/"+("00"+e.$M).slice(-2)+"/"+("0000"+e.$y).slice(-4))){
+       
+        setMovement({ ...movement, date: e.toISOString() });
+        
+      }
     } else {
       setMovement({ ...movement, [e.target.name]: e.target.value });
     }
@@ -37,16 +47,26 @@ const Form = () => {
 
   const handleClick = async (e) => {
     e.preventDefault();
+    
     helpRequest()
       .editMovement(data.state.id, movement)
       .then((res) => {
+        
+
         if (res.status == 200) {
           navigate("/ListMovements");
         } else if (res.error) {
+          
           swal("No se pudo editar", res.statusText, "error");
         }
       });
   };
+  if (isLoading) {
+    return <div>Loading ...</div>;
+  }
+  if (!isAuthenticated) {
+    return <LoginButton />;
+  }
   if (!data.state) {
     return navigate("/ListMovements");
   } else {
